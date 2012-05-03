@@ -18,11 +18,16 @@ test: $(APP_XML) $(EXPANDED_ANES) $(SWF) | $(EXT_DIR)
 	adl -profile mobileDevice -extdir $(EXT_DIR) \
     $(ADL_SCREENSIZE) $< . |grep -v DVFreeThread |cat)
 
-$(EXPANDED_ANES): $(EXT_DIR)/%.ane : %.ane
-	$(call silent,EXPAND $<, \
-	rm -fr $@; \
-	mkdir -p $@; \
-	unzip -qd $@ $<)
+define expandane
+$$(EXT_DIR)/$(notdir $1): $1
+	$$(call silent,EXPAND $(notdir $1), \
+	rm -fr $$@ && \
+	mkdir -p $$@ && \
+	unzip -qd $$@ $$<)
+
+endef
+
+$(eval $(foreach A,$(ANES),$(call expandane,$A)))
 
 install: $(IPA)
 	$(call silent,INSTALL $<, \
@@ -48,11 +53,11 @@ $(DSYM_ZIP): $(DSYM)
 $(APP_XML): $(APP_XML_IN) $(GIT_HEAD)
 	$(call expandMacros)
 
-$(IPA): $(SWF) $(APP_XML) $(ANES) $(OTHER_RESOURCES) $(ICONS)
+$(IPA): $(SWF) $(APP_XML) $(ANES) $(OTHER_RESOURCES) $(ICONS) $(EXPANDED_ANES)
 	$(call silent,ADT $@, \
-	rm -fr $(DSYM); \
+	rm -fr $(DSYM) && \
 	$(ADT) $(ADT_FLAGS) $@ $(APP_XML) $(SDK_OPT) $< $(ICONS) \
-    -extdir . $(OTHER_RESOURCES) >adt.out; \
+    $(ADT_EXTDIRS) $(OTHER_RESOURCES) >adt.out; \
 	grep -v 4-byte adt.out |cat)
 
 # Android
@@ -71,7 +76,7 @@ $(APK): $(SWF) $(APP_XML)
 %.apk: %.swf
 	$(call silent,ADT $@, \
 	$(ADT) $(APK_ADTFLAGS) $@ $(APP_XML) $< $(ICONS) \
-	  -extdir . $(OTHER_RESOURCES))
+	  $(ADT_EXTDIRS) $(OTHER_RESOURCES))
 
 $(SWF): $(SRC_MAIN) $(ANES)
 	$(call silent,MXMLC $@, \

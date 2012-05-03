@@ -14,15 +14,13 @@ DSYM = $(NAME).app.dSYM
 DSYM_ZIP = $(DSYM).zip
 
 EXT_DIR = ext
-EXPANDED_ANES = $(foreach A,$(ANES),$(EXT_DIR)/$A)
+FULL_EXT_DIR = $(abspath ext)
+EXPANDED_ANES = $(foreach A,$(ANES),$(EXT_DIR)/$(notdir $A))
 
 APP_XML = app.xml
 APP_XML_NS := $(shell grep -om1 http:.*[0-9] $(APP_XML_IN))
 ICONS := $(shell xml sel -N x=$(APP_XML_NS) -t -v '//x:icon/*' $(APP_XML_IN))
 
-DEVELOPER := $(shell xcode-select -print-path)
-IOS_ROOT = $(DEVELOPER)/Platforms/iPhoneOS.platform/Developer
-IOS_SYSROOT := $(firstword $(wildcard $(IOS_ROOT)/SDKs/*.sdk))
 KEYS_ROOT = $(call findparent,keys/$(COMPANY))
 KEYS_PATH = $(KEYS_ROOT)/$(APP_ID) $(KEYS_ROOT)
 MOBILEPROVISION = $(call findfile,$(KEYS_PATH),development.mobileprovision)
@@ -32,9 +30,15 @@ CONNECT = $(if $(findstring debug,$(TARGET)),-connect $(shell hostname))
 TARGET_OPT = -target $(TARGET) $(CONNECT)
 STOREPASS = $(if $(KEY_PASSWORD),-storepass $(KEY_PASSWORD))
 SIGN_OPT = -provisioning-profile $(MOBILEPROVISION) -storetype PKCS12 -keystore $(KEYSTORE) $(STOREPASS)
-ADT_FLAGS = -package -XO1 -Xverbose 0 -Xaotperflog -Xnostrip $(TARGET_OPT) $(SIGN_OPT)
-ADT_FLAGS = -package -XO1 -Xverbose 0 -Xnostrip $(TARGET_OPT) $(SIGN_OPT)
+# ADTX_FLAGS = -Xaotperflog
+adtxlinkdir = $(if $(wildcard $1),-Xlinker -L$(abspath $1))
+ADT_LDFLAGS = $(foreach a,$(ANES),$(call adtxlinkdir,$(EXT_DIR)/$(notdir $a)/$(ANE_BUNDLED_LIBS_DIR)))
+ADTX_FLAGS += -XO1 -Xverbose 0 -Xnostrip $(ADT_LDFLAGS)
+ADT_FLAGS = -package $(ADTX_FLAGS) $(TARGET_OPT) $(SIGN_OPT)
+ADT_EXTDIRS = $(foreach e,$(ANES),-extdir $(dir $e))
 SDK_OPT = -platformsdk $(IOS_SYSROOT)
+ANE_BUNDLED_LIBS_DIR = META-INF/ANE/iPhone-ARM-lib
+
 
 ANDROID_SDK := $(realpath $(shell which adb)/../..)
 APK_KEYSTORE = $(KEYS_ROOT)/android.pfx

@@ -79,9 +79,10 @@ You should define all these variables in your `Makefile`:
 * OTHER_RESOURCES: Other files that should be included in your ipa/apk
 
 ### ANE Source (relevant only when including mk/ane.mk)
-* OBJC_SRCDIRS: A list of directories containing your iOS native sources
-* OBJC_INCLDIRS: A list of directories containing iOS include files
-* OBJC_XIBDIRS: A list of directories containing iOS XIB files
+* EXT_ID: Extension ID
+* ANE_IOS_LIB_SOURCES: A list of your iOS native source files
+* ANE_IOS_LIB_CFLAGS: Additional CFLAGS, usually -I<dir>, etc.
+* ANE_BUNDLED_LIBS: A list of libraries to bundle in META-INF/ANE/iPhone-ARM-lib
 
 Application Descriptor Template
 -------------------------------
