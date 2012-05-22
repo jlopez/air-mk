@@ -23,8 +23,10 @@ ICONS := $(shell xml sel -N x=$(APP_XML_NS) -t -v '//x:icon/*' $(APP_XML_IN))
 
 KEYS_ROOT = $(call findparent,keys/$(COMPANY))
 KEYS_PATH = $(KEYS_ROOT)/$(APP_ID) $(KEYS_ROOT)
-MOBILEPROVISION = $(call findfile,$(KEYS_PATH),development.mobileprovision)
-KEYSTORE = $(call findfile,$(KEYS_PATH),development.p12)
+MOBILEPROVISION_NAME = $(if $(findstring app-store,$(TARGET)),appstore,development)
+MOBILEPROVISION = $(call findfile,$(KEYS_PATH),$(MOBILEPROVISION_NAME).mobileprovision)
+KEY_NAME = $(if $(findstring app-store,$(TARGET)),distribution,development)
+KEYSTORE = $(call findfile,$(KEYS_PATH),$(KEY_NAME).p12)
 TARGET = ipa-debug-interpreter
 CONNECT = $(if $(findstring debug,$(TARGET)),-connect $(shell hostname))
 TARGET_OPT = -target $(TARGET) $(CONNECT)
