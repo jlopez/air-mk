@@ -21,7 +21,7 @@ $(ANE): $(EXT_XML) $(ANE_SWC) $(ANE_SWF) $(IOS_XML) $(ANE_IOS_LIB) $(ANE_BUNDLED
 
 $(ANE_SWC): $(ANE_AS3_SRCS)
 	$(call silent,COMPC $(ANE_CLASS), \
-	$(COMPC) $(ASCFLAGS) -sp+=$(ANE_AS3DIR) -output $@ $(ANE_CLASS))
+	$(COMPC) $(ASCFLAGS) $(foreach d,$(ANE_AS3DIR),-sp+=$d) -output $@ $(ANE_CLASS))
 
 $(ANE_SWF): $(ANE_SWC)
 	$(call silent,EXTRACT $@, unzip -qo $< $@)
