@@ -5,7 +5,7 @@ ADT = adt
 MXMLC = mxmlc
 ADB = adb
 
-ASCFLAGS = +configname=airmobile -swf-version=13 -debug=false
+ASCFLAGS = +configname=airmobile -swf-version=13 -debug=$(if $(DEBUG),true,false)
 
 SWF = $(NAME).swf
 IPA = $(NAME).ipa
