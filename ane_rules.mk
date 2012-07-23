@@ -1,6 +1,7 @@
 ################## ANE Rules
 clean::
 	rm -fr $(EXT_XML) *.ane *.sw? *.nib META-INF
+	rm -fr $(WIKI_DIR)
 
 ane: $(ANE)
 
@@ -26,5 +27,24 @@ $(ANE_SWC): $(ANE_AS3_SRCS)
 $(ANE_SWF): $(ANE_SWC)
 	$(call silent,EXTRACT $@, unzip -qo $< $@)
 	@touch $@
+
+dist-upload: $(WIKI_MANIFEST)
+	cd $(WIKI_DIR) &&\
+  git add -A &&\
+  git commit -m 'Update binaries from rev $(COMMIT)' &&\
+  git push
+
+$(WIKI_MANIFEST): $(WIKI_DIST)
+	echo "Commit $(COMMIT)" >$@
+	echo >>$@
+	printf "$(foreach d,$(WIKI_DIST),[$(notdir $d)]($(notdir $d)))" >>$@
+
+$(WIKI_DIST): | $(WIKI_DIR)
+
+$(WIKI_DIR)/%: %
+	cp $< $@
+
+$(WIKI_DIR):
+	git clone $(WIKI_GIT_URL) $(WIKI_DIR)
 
 .PHONY: ane clean
