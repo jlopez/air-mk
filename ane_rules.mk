@@ -45,6 +45,6 @@ $(WIKI_DIR)/%: %
 	cp $< $@
 
 $(WIKI_DIR):
-	git clone $(WIKI_GIT_URL) $(WIKI_DIR)
+	git clone $(call chkvar,WIKI_GIT_URL) $(WIKI_DIR)
 
 .PHONY: ane clean
