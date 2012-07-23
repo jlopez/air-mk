@@ -4,14 +4,15 @@ DEVELOPER := $(shell xcode-select -print-path)
 IOS_ROOT = $(DEVELOPER)/Platforms/iPhoneOS.platform/Developer
 IOS_SYSROOT := $(firstword $(wildcard $(IOS_ROOT)/SDKs/*.sdk))
 
-# For Debug build -DDEBUG=1 -O0
+OBJCDEBUG = $(if $(DEBUG),-DDEBUG=1 -O0,-Os)
 OBJCFLAGS = -arch armv7 -fmessage-length=0 \
   -fdiagnostics-show-option \
   -fdiagnostics-print-source-range-info \
   -fdiagnostics-show-category=id -fdiagnostics-parseable-fixits \
-  -std=gnu99 -Wno-trigraphs -fpascal-strings -Os -Wreturn-type -Wparentheses \
+  -std=gnu99 -Wno-trigraphs -fpascal-strings -Wreturn-type -Wparentheses \
   -Wswitch -Wno-unused-parameter -Wunused-variable -Wunused-value \
-  -Wno-shorten-64-to-32 -isysroot $(IOS_SYSROOT) \
+  -Wno-shorten-64-to-32 $(OBJCDEBUG) \
+  -isysroot $(IOS_SYSROOT) \
   -gdwarf-2 -Wno-sign-conversion -mthumb \
   "-DIBOutlet=__attribute__((iboutlet))" \
   "-DIBAction=void)__attribute__((ibaction)" \
@@ -27,6 +28,7 @@ OBJCXXFLAGS = -arch armv7 -fmessage-length=0 \
   -Wno-sign-compare -Wno-shorten-64-to-32 -Wno-newline-eof -Wno-selector \
   -Wno-strict-selector-match -Wno-undeclared-selector \
   -Wno-deprecated-implementations -Wno-arc-abi -Wc++11-extensions \
+  $(OBJCDEBUG) \
   -isysroot $(IOS_SYSROOT) \
   -Wprotocol -Wdeprecated-declarations -Winvalid-offsetof -g \
   -Wno-conversion -Wno-sign-conversion -mthumb \

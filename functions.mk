@@ -38,7 +38,7 @@ FINDPARENT_PATH_SEARCH = .. ../.. ../../.. ../../../.. \
   ../../../../.. ../../../../../..
 findfile = $(call firstpath,$(foreach p,$1,$p/$2))
 firstpath = $(firstword $(wildcard $1))
-findparent = $(call firstpath,$(foreach p,$(FINDPARENT_PATH_SEARCH),$p/$1))
+findparent = $(call check,$(call firstpath,$(foreach p,$(FINDPARENT_PATH_SEARCH),$p/$1)),Parent path $1 not found)
 
 ansi = $$'\x1B[$1m'
 fg = $(call ansi,38;5;$1)
@@ -58,3 +58,14 @@ macros = $(shell grep -o '@[^@]*@' $1 |sort |uniq |tr -d @)
 macrosSed ='$(foreach V,$(call macros,$1),s\#@$V@\#$($V)\#g;)'
 expandMacros = $(call silent,MACRO $@,sed $(call macrosSed,$<) $< >$@)
 resizeImage = $(call silent,RESIZE $@,sips -z $1 $1 $< --out $@ >/dev/null)
+
+SPACE = $(eval) $(eval)
+# Join list with separator
+joinsep = $(subst $(SPACE),$2,$1)
+
+# Fail if given path does not exist
+checkpath = $(if $(wildcard $1),$1,$(error Path $1 does not exist))
+# Fail if given value missing
+check = $(if $1,$1,$(error $2))
+# Fail if given variable is undefined $(call chkvar,VAR_NAME)
+chkvar = $(if $($1),$($1),$(error Variable '$1' not defined))
