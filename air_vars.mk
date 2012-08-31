@@ -28,10 +28,11 @@ MOBILEPROVISION_NAME = $(if $(findstring app-store,$(TARGET)),appstore,developme
 MOBILEPROVISION = $(call findfile,$(KEYS_PATH),$(MOBILEPROVISION_NAME).mobileprovision)
 KEY_NAME = $(if $(findstring app-store,$(TARGET)),distribution,development)
 KEYSTORE = $(call findfile,$(KEYS_PATH),$(KEY_NAME).p12)
+KEYPASS = $(KEYSTORE:.p12=.password)
 TARGET = ipa-debug-interpreter
 CONNECT = $(if $(findstring debug,$(TARGET)),-connect $(shell hostname))
 TARGET_OPT = -target $(TARGET) $(CONNECT)
-STOREPASS = -storepass $(call chkvar,KEY_PASSWORD)
+STOREPASS = -storepass $(if $(wildcard $(KEYPASS)),$(shell cat $(KEYPASS)),$(call chkvar,KEY_PASSWORD))
 SIGN_OPT = -provisioning-profile $(MOBILEPROVISION) -storetype PKCS12 -keystore $(KEYSTORE) $(STOREPASS)
 # ADTX_FLAGS = -Xaotperflog
 adtxlinkdir = $(if $(wildcard $1),-Xlinker -L$(abspath $1))
