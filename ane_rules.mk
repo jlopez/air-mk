@@ -11,7 +11,9 @@ $(EXT_XML): $(EXT_XML_IN)
 $(ANE): $(EXT_XML) $(ANE_SWC) $(ANE_SWF) $(IOS_XML) $(ANE_IOS_LIB) $(ANE_BUNDLED_LIBS)
 	$(call silent,ADT $@, \
 	adt -package -target ane $(ANE) $(EXT_XML) -swc $(ANE_SWC) \
-      -platform iPhone-ARM -platformoptions $(IOS_XML) $(ANE_IOS_LIB) $(ANE_SWF) \
+      -platform iPhone-ARM -platformoptions $(IOS_XML) \
+          $(ANE_IOS_LIB) $(ANE_SWF) \
+          $(foreach d,$(ANE_IOS_RESOURCE_DIRS),-C $(dir $d) $(notdir $d)) \
       -platform default $(ANE_SWF))
 	$(if $(ANE_BUNDLED_LIBS), \
 	  $(call silent,MERGE $@, \

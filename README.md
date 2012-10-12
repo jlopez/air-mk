@@ -82,6 +82,7 @@ You should define all these variables in your `Makefile`:
 * EXT_ID: Extension ID
 * ANE_IOS_LIB_SOURCES: A list of your iOS native source files
 * ANE_IOS_LIB_CFLAGS: Additional CFLAGS, usually -I<dir>, etc.
+* ANE_IOS_RESOURCE_DIRS: Additional resource directories to include in the ANE
 * ANE_BUNDLED_LIBS: A list of libraries to bundle in META-INF/ANE/iPhone-ARM-lib
 
 Application Descriptor Template
