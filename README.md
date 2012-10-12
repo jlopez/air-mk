@@ -9,7 +9,7 @@ there, including:
 * Mobile installation (ipa/apk) via USB (`make install`)
 * Mobile launch (apk) via USB (`make run-apk`)
 * Test mobile apps on the desktop (`make test`)
-* Native code compilation (Objective-C, Objective-C++ for now)
+* Native code compilation (Objective-C, Objective-C++, Java)
 * Full dependency tracking including header files
 * Automatic code signing key selection
 * Automatic app descriptor version generation from git
@@ -58,6 +58,7 @@ You should define all these variables in your `Makefile`:
 ### Basic
 * APP_ID: Your AIR application ID
 * NAME: Will be used to name your build products (NAME.ipa, NAME.apk, NAME.ane)
+* ANDROID_PROPERTIES_IN: Android properties file
 
 ### Signing
 * KEYDIR: A directory containing a list of companies. Each company should
@@ -83,7 +84,8 @@ You should define all these variables in your `Makefile`:
 * ANE_IOS_LIB_SOURCES: A list of your iOS native source files
 * ANE_IOS_LIB_CFLAGS: Additional CFLAGS, usually -I<dir>, etc.
 * ANE_IOS_RESOURCE_DIRS: Additional resource directories to include in the ANE
-* ANE_BUNDLED_LIBS: A list of libraries to bundle in META-INF/ANE/iPhone-ARM-lib
+* ANE_ANDROID_JAR_SOURCES: List of android projects / jar files to compile
+* ANE_ANDROID_JAR_CLASSPATH: Additional android jars to compile against
 
 Application Descriptor Template
 -------------------------------
@@ -118,6 +120,5 @@ future:
 * Better error detection
 * Better documentation
 * Ensure operability under a single environment (just Android, or just iOS)
-* Add Android ANE creation support (compile Dalvik)
 
 [1]: http://www.funky-monkey.nl/blog/2012/04/24/overlaying-flex-4-6-with-air-3-2-the-easy-way/ "Overlayiing Air SDK"

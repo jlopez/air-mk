@@ -1,19 +1,22 @@
 ################## ANE Rules
+ane: $(ANE)
+
 clean::
 	rm -fr $(EXT_XML) *.ane *.sw? *.nib META-INF
+	rm -fr $(ANE_ANDROID_LIB) gen cls jar $(ANDROID_PROPERTIES)
 	rm -fr $(WIKI_DIR)
-
-ane: $(ANE)
 
 $(EXT_XML): $(EXT_XML_IN)
 	$(call expandMacros)
 
-$(ANE): $(EXT_XML) $(ANE_SWC) $(ANE_SWF) $(IOS_XML) $(ANE_IOS_LIB) $(ANE_BUNDLED_LIBS)
+$(ANE): $(EXT_XML) $(ANE_SWC) $(ANE_SWF) $(IOS_XML) $(ANE_IOS_LIB) $(ANE_ANDROID_JAR) $(ANE_BUNDLED_LIBS) $(ANE_ANDROID_JAR_DEVICE_LIBS)
 	$(call silent,ADT $@, \
 	adt -package -target ane $(ANE) $(EXT_XML) -swc $(ANE_SWC) \
       -platform iPhone-ARM -platformoptions $(IOS_XML) \
           $(ANE_IOS_LIB) $(ANE_SWF) \
           $(foreach d,$(ANE_IOS_RESOURCE_DIRS),-C $(dir $d) $(notdir $d)) \
+      -platform Android-ARM $(ANE_ANDROID_JAR) $(ANE_SWF) \
+          $(foreach d,$(ANE_ANDROID_JAR_SOURCES),$(if $(wildcard $d/res),-C $d res)) \
       -platform default $(ANE_SWF))
 	$(if $(ANE_BUNDLED_LIBS), \
 	  $(call silent,MERGE $@, \
@@ -50,3 +53,5 @@ $(WIKI_DIR):
 	git clone $(call chkvar,WIKI_GIT_URL) $(WIKI_DIR)
 
 .PHONY: ane clean
+
+$(call suffixrules,JAR,jar)

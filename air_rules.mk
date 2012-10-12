@@ -1,5 +1,5 @@
 ################## SWF Rules
-all: ipa
+build: ipa apk
 
 clean::
 	rm -fr *.swf ext *.out *.ipa *.apk *.dSYM* aot* AOT* air*
@@ -53,6 +53,9 @@ $(DSYM_ZIP): $(DSYM)
 $(APP_XML): $(APP_XML_IN) $(GIT_HEAD)
 	$(call expandMacros)
 
+$(ANDROID_PROPERTIES): $(ANDROID_PROPERTIES_IN) $(GIT_HEAD)
+	$(call expandMacros)
+
 $(IPA): $(SWF) $(APP_XML) $(ANES) $(OTHER_RESOURCES) $(ICONS) $(EXPANDED_ANES)
 	$(call silent,ADT $@, \
 	rm -fr $(DSYM) && \
@@ -66,17 +69,25 @@ run-apk: install-apk
 	$(ADT) -launchApp -platform android \
 	  -platformsdk $(ANDROID_SDK) -appid $(APP_ID))
 
+hash-apk:
+	$(call silent, HASH-APK, \
+	openssl pkcs12 -nomacver -passin pass:$(KEYPASSWORD) -nokeys -in $(APK_KEYSTORE) | \
+	openssl x509 -outform der | \
+	openssl sha1 -binary | \
+	openssl base64 | pbcopy)
+
 install-apk: $(APK)
 	$(call silent,INSTALL $<, \
 	$(ADB) install -r $<; \
 	touch $@)
 
-$(APK): $(SWF) $(APP_XML)
+$(APK): $(SWF) $(APP_XML) $(ANES) $(ANDROID_PROPERTIES) $(OTHER_RESOURCES) $(ICONS)
 
 %.apk: %.swf
 	$(call silent,ADT $@, \
 	$(ADT) $(APK_ADTFLAGS) $@ $(APP_XML) $< $(ICONS) \
-	  $(ADT_EXTDIRS) $(OTHER_RESOURCES))
+	  $(ADT_EXTDIRS) $(OTHER_RESOURCES) \
+		-C $(dir $(ANDROID_PROPERTIES)) $(notdir $(ANDROID_PROPERTIES)))
 
 $(SWF): $(SRC_MAIN) $(ANES)
 	$(call silent,MXMLC $@, \

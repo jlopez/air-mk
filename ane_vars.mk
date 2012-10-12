@@ -1,8 +1,11 @@
 ################## ANE Variables
+ROOT ?= ..
+
 ANE_IOS_LIB = libIOS.a
+ANE_ANDROID_JAR = android.jar
 
 ANE := $(shell echo $(NAME).ane | tr A-Z a-z)
-ANE_SRCDIR = $(ROOT)/src
+ANE_SRCDIR ?= $(ROOT)/src
 ANE_AS3DIR ?= $(ANE_SRCDIR)/as3
 ANE_CLASS = $(EXT_ID).$(NAME)
 ANE_AS3_SRCS := $(shell find $(ANE_AS3DIR) -name '*.as')
@@ -21,3 +24,87 @@ OBJC_XIBS := $(notdir $(wildcard $(OBJC_XIBDIRS:=/*.xib)))
 OBJC_NIBS := $(OBJC_XIBS:%.xib=%.nib)
 
 vpath %.xib $(OBJC_XIBDIRS)
+
+extractAndroidPackage = $(shell xml sel -T -t -m /manifest -v @package $1)
+getPackagePath = $(shell echo $1 | tr . /)
+
+# 1:name, 2:path, 3:manifest, 4:resources, 5:package, 6:packagePath, 7:R.java
+androidResources = $(foreach p,$2,$(call ar1,$1,$p))
+ar1 = $(call ar2,$1,$2,$2/AndroidManifest.xml,$(call find,$2/res,-type f))
+ar2 = $(if $(wildcard $3),$(if $4,$(call ar3,$1,$2,$3,$4)))
+ar3 = $(call ar4,$1,$2,$3,$4,$(call extractAndroidPackage,$3))
+ar4 = $(call ar5,$1,$2,$3,$4,$5,$(call getPackagePath,$5))
+ar5 = $(call ar6,$1,$2,$3,$4,$5,$6,$$($1_GEN)/$6/R.java)
+define ar6
+$1_GEN_SOURCES += $7
+
+$7: $4 | $$($1_GEN)
+	$$(call silent,AAPT $5, \
+  $(AAPT) package --non-constant-id -f -m --auto-add-overlay \
+          -M $3 -S $2/res -I $$($1_ANDROID_JAR) -J $$($1_GEN))
+
+endef
+
+# 1:name 2:path 3:java files
+androidSources = $(foreach p,$2,$(call aj1,$1,$p))
+aj1 = $(call aj2,$1,$2/src,$(call find,$2/src,-name '*.java'))
+aj2 = $(if $3,$(call aj3,$1,$2,$3))
+define aj3
+$$($1_CLS)/%.class: $2/%.java $$($1_GEN_SOURCES) $$($1_CLASSPATH) | $$($1_CLS)
+	$$(call silent,JAVA $$($1), \
+  $$(JAVAC) $$($1_JFLAGS) $$($1_SRCS) $$($1_GEN_SOURCES))
+$1_SOURCEPATH += $2
+$1_SRCS += $3
+$1_JAR_DEPS += $(patsubst $2/%.java,$$($1_CLS)/%.class,$3)
+
+endef
+
+# 1:name 2:jar full path 3:jar name
+jarClasses = $(foreach p,$(filter %.jar,$2),$(call jc1,$1,$p))
+jc1 = $(if $2,$(call jc2,$1,$2,$(notdir $2)))
+define jc2
+$1_CLASSPATH += $2
+$1_JAR_DEPS += $$($1_WORK)/$3
+
+$$($1_WORK)/$3: $2 | $$($1_CLS)
+	$$(call silent,EXTRACT $3, \
+  unzip -qqod $$($1_CLS) $2 && touch $$@)
+
+endef
+
+define jar
+
+$1_WORK = .$($1:.jar=)
+$1_CLS = $$($1_WORK)/cls
+$1_GEN = $$($1_WORK)/gen
+
+$1_CP = $$(call joinwith,:,$$(CLASSPATH) $$($1_CLASSPATH))
+$1_SP = $$(call joinwith,:,$$($1_SOURCEPATH) $$($1_GEN))
+
+$1_API ?= 8
+$1_ANDROID_JAR = $$(ANDROID_SDK)/platforms/android-$$($1_API)/android.jar
+$1_JFLAGS = -d $$($1_CLS) \
+            $$(if $$($1_CP),-classpath $$($1_CP)) \
+            -sourcepath $$($1_SP) \
+            -target 1.5 -bootclasspath $$($1_ANDROID_JAR) \
+            -encoding UTF-8 -g -source 1.5 \
+            $$($1_FLAGS)
+
+$(call jarClasses,$1,$($1_SOURCES))
+$(call androidResources,$1,$($1_SOURCES))
+$(call androidSources,$1,$($1_SOURCES))
+
+$$($1): $$($1_JAR_DEPS)
+	$$(call silent,JAR $$@, \
+  $$(JAR) cf $$@ -C $$($1_CLS) .)
+
+$$($1_CLS):
+	$$(call silent,MKDIR $$@, mkdir -p $$@)
+
+$$($1_GEN):
+	$$(call silent,MKDIR $$@, mkdir -p $$@)
+
+clean::
+	rm -fr $$($1_WORK) $$($1)
+
+endef

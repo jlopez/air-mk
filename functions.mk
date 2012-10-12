@@ -1,11 +1,18 @@
+space :=
+space +=
+joinwith = $(subst $(space),$1,$(strip $2))
 # findfiles paths,wildcards
+find = $(if $(wildcard $1),$(shell find $1 $2))
 findfiles = $(wildcard $(foreach p,$1,$(foreach s,$2,$p/$s)))
 findcfiles = $(call findfiles,$1,*.m *.mm *.c *.cc)
+findjavafiles = $(call find,$1,-iname '*.java')
 # filtercfiles,paths
 filtercfiles = $(filter %.m %.mm %.c %.cc,$1)
 filteroutcfiles = $(filter-out %.m %.mm %.c %.cc,$1)
 # replacesuffix,suffixes,replacement,list
 replacesuffix = $(foreach s,$1,$(patsubst %$s,%$2,$(filter %$s,$3)))
+# replacedir,fromdirs,todir,files[,fromext,toext]
+replacedir = $(foreach p,$1,$(patsubst $p/%$4,$2/%$5,$(filter $p/%$4,$3)))
 # dumpvars,patterns
 dumpvars = $(eval $(foreach v,$(sort $(filter $1,$(.VARIABLES))),$$(info $v = $($v))))
 setvpath = $(foreach p,$1,vpath $p $(sort $2))
@@ -54,6 +61,10 @@ define silent
 $S$2
 endef
 
+define dumpvar
+$(info $(shell printf $(call fg,42)$(bold)$1$(reset)' "$($1)"'))
+endef
+
 macros = $(shell grep -o '@[^@]*@' $1 |sort |uniq |tr -d @)
 macrosSed ='$(foreach V,$(call macros,$1),s\#@$V@\#$($V)\#g;)'
 expandMacros = $(call silent,MACRO $@,sed $(call macrosSed,$<) $< >$@)
@@ -69,3 +80,11 @@ checkpath = $(if $(wildcard $1),$1,$(error Path $1 does not exist))
 check = $(if $1,$1,$(error $2))
 # Fail if given variable is undefined $(call chkvar,VAR_NAME)
 chkvar = $(if $($1),$($1),$(error Variable '$1' not defined))
+
+# Evaluates definition (definition name, variable name, suffix)
+# Parameters passed to definition: (variable name, variable stem, dir, basename, suffix)
+_suffixrules = $(eval $(call $1,$2,$(patsubst %_$3,%,$2),$(dir $($2)),$(basename $(notdir $($2))),$3))
+suffixrules = $(foreach l,$(filter %_$1,$(.VARIABLES)),$(call _suffixrules,$2,$l,$1))
+# Debug suffix rule
+# Usage: $$(call debugsuffixrule,$1,$5)
+debugsuffixrule = $(foreach v,$(filter $1_%,$(.VARIABLES)),$(call dumpvar,$v))$(error Bye)
