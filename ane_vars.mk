@@ -36,7 +36,8 @@ ar3 = $(call ar4,$1,$2,$3,$4,$(call extractAndroidPackage,$3))
 ar4 = $(call ar5,$1,$2,$3,$4,$5,$(call getPackagePath,$5))
 ar5 = $(call ar6,$1,$2,$3,$4,$5,$6,$$($1_GEN)/$6/R.java)
 define ar6
-$1_GEN_SOURCES += $7
+$1_SRCS += $7
+$1_JAR_DEPS += $(7:$$($1_GEN)/%.java=$$($1_CLS)/%.class)
 
 $7: $4 | $$($1_GEN)
 	$$(call silent,AAPT $5, \
@@ -45,17 +46,33 @@ $7: $4 | $$($1_GEN)
 
 endef
 
+# 1:name 2:path 3:aidl files
+androidInterfaces = $(foreach p,$2,$(call ai1,$1,$p))
+ai1 = $(call ai2,$1,$2/src,$(call find,$2/src,-name '*.aidl'))
+ai2 = $(if $3,$(call ai3,$1,$2,$3))
+define ai3
+$1_SRCS += $(patsubst $2/%.aidl,$$($1_GEN)/%.java,$3)
+$1_JAR_DEPS += $(patsubst $2/%.aidl,$$($1_CLS)/%.class,$3)
+
+$$($1_GEN)/%.java: $2/%.aidl | $$($1_GEN)
+	$$(call silent,AIDL $$(notdir $$<), \
+  $$(AIDL) -p$$($1_FRAMEWORK_AIDL) -o$$($1_GEN) -I$2 $$<)
+.PRECIOUS: $$($1_GEN)/%.java
+
+endef
+
 # 1:name 2:path 3:java files
 androidSources = $(foreach p,$2,$(call aj1,$1,$p))
 aj1 = $(call aj2,$1,$2/src,$(call find,$2/src,-name '*.java'))
 aj2 = $(if $3,$(call aj3,$1,$2,$3))
 define aj3
-$$($1_CLS)/%.class: $2/%.java $$($1_GEN_SOURCES) $$($1_CLASSPATH) | $$($1_CLS)
-	$$(call silent,JAVA $$($1), \
-  $$(JAVAC) $$($1_JFLAGS) $$($1_SRCS) $$($1_GEN_SOURCES))
 $1_SOURCEPATH += $2
 $1_SRCS += $3
 $1_JAR_DEPS += $(patsubst $2/%.java,$$($1_CLS)/%.class,$3)
+
+$$($1_CLS)/%.class: $2/%.java $$($1_CLASSPATH) | $$($1_CLS)
+	$$(call silent,JAVA $$($1), \
+  $$(JAVAC) $$($1_JFLAGS) $$($1_SRCS))
 
 endef
 
@@ -83,6 +100,7 @@ $1_SP = $$(call joinwith,:,$$($1_SOURCEPATH) $$($1_GEN))
 
 $1_API ?= 8
 $1_ANDROID_JAR = $$(ANDROID_SDK)/platforms/android-$$($1_API)/android.jar
+$1_FRAMEWORK_AIDL = $$(ANDROID_SDK)/platforms/android-$$($1_API)/framework.aidl
 $1_JFLAGS = -d $$($1_CLS) \
             $(if $(DEBUG),-g) \
             $$(if $$($1_CP),-classpath $$($1_CP)) \
@@ -93,11 +111,16 @@ $1_JFLAGS = -d $$($1_CLS) \
 
 $(call jarClasses,$1,$($1_SOURCES))
 $(call androidResources,$1,$($1_SOURCES))
+$(call androidInterfaces,$1,$($1_SOURCES))
 $(call androidSources,$1,$($1_SOURCES))
 
 $$($1): $$($1_JAR_DEPS)
 	$$(call silent,JAR $$@, \
   $$(JAR) cf $$@ -C $$($1_CLS) .)
+
+$$($1_CLS)/%.class: $$($1_GEN)/%.java $$($1_CLASSPATH) | $$($1_CLS)
+	$$(call silent,JAVA $$($1), \
+  $$(JAVAC) $$($1_JFLAGS) $$($1_SRCS))
 
 $$($1_CLS):
 	$$(call silent,MKDIR $$@, mkdir -p $$@)

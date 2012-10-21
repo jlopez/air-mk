@@ -1,5 +1,6 @@
 AAPT = $(call chkvar,ANDROID_SDK)/platform-tools/aapt
 ADB = $(ANDROID_SDK)/platform-tools/adb
+AIDL = $(ANDROID_SDK)/platform-tools/aidl
 JAVAC = javac
 JAR = jar
 
