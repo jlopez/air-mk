@@ -84,6 +84,7 @@ $1_SP = $$(call joinwith,:,$$($1_SOURCEPATH) $$($1_GEN))
 $1_API ?= 8
 $1_ANDROID_JAR = $$(ANDROID_SDK)/platforms/android-$$($1_API)/android.jar
 $1_JFLAGS = -d $$($1_CLS) \
+            $(if $(DEBUG),-g) \
             $$(if $$($1_CP),-classpath $$($1_CP)) \
             -sourcepath $$($1_SP) \
             -target 1.5 -bootclasspath $$($1_ANDROID_JAR) \
