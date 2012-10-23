@@ -77,7 +77,10 @@ $$($1_CLS)/%.class: $2/%.java $$($1_CLASSPATH) | $$($1_CLS)
 endef
 
 # 1:name 2:jar full path 3:jar name
-jarClasses = $(foreach p,$(filter %.jar,$2),$(call jc1,$1,$p))
+define jarClasses
+$(foreach p,$(filter %.jar,$2),$(call jc1,$1,$p))
+$(foreach p,$2,$(foreach j,$(call find,$p/libs,-name '*.jar'),$(call jc1,$1,$j)))
+endef
 jc1 = $(if $2,$(call jc2,$1,$2,$(notdir $2)))
 define jc2
 $1_CLASSPATH += $2
