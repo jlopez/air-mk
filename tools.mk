@@ -4,6 +4,8 @@ AIDL = $(ANDROID_SDK)/platform-tools/aidl
 JAVAC = javac
 JAR = jar
 
+ANDROID_DEBUGGABLE = $(if DEBUG,android:debuggable="true")
+
 $(if $(wildcard $(AAPT)),,$(error Invalid Android SDK at $(ANDROID_SDK)))
 
 MXMLC_PATH := $(shell which mxmlc)
