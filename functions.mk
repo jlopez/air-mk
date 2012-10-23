@@ -84,7 +84,7 @@ chkvar = $(if $($1),$($1),$(error Variable '$1' not defined))
 # Evaluates definition (definition name, variable name, suffix)
 # Parameters passed to definition: (variable name, variable stem, dir, basename, suffix)
 _suffixrules = $(eval $(call $1,$2,$(patsubst %_$3,%,$2),$(dir $($2)),$(basename $(notdir $($2))),$3))
-suffixrules = $(foreach l,$(filter %_$1,$(.VARIABLES)),$(call _suffixrules,$2,$l,$1))
+suffixrules = $(foreach l,$(filter %_$1,$(.VARIABLES)),$(if $($l),$(call _suffixrules,$2,$l,$1)))
 # Debug suffix rule
 # Usage: $$(call debugsuffixrule,$1,$5)
 debugsuffixrule = $(foreach v,$(filter $1_%,$(.VARIABLES)),$(call dumpvar,$v))$(error Bye)

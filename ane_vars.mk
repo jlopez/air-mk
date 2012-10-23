@@ -2,7 +2,7 @@
 ROOT ?= ..
 
 ANE_IOS_LIB = libIOS.a
-ANE_ANDROID_JAR = android.jar
+ANE_ANDROID_JAR = $(if $(ANE_ANDROID_JAR_SOURCES),android.jar)
 
 ANE := $(shell echo $(NAME).ane | tr A-Z a-z)
 ANE_SRCDIR ?= $(ROOT)/src
@@ -117,7 +117,7 @@ $(call androidResources,$1,$($1_SOURCES))
 $(call androidInterfaces,$1,$($1_SOURCES))
 $(call androidSources,$1,$($1_SOURCES))
 
-$$($1): $$($1_JAR_DEPS)
+$$($1): $$($1_JAR_DEPS) | $$($1_CLS)
 	$$(call silent,JAR $$@, \
   $$(JAR) cf $$@ -C $$($1_CLS) .)
 

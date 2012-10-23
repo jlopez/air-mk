@@ -15,8 +15,10 @@ $(ANE): $(EXT_XML) $(ANE_SWC) $(ANE_SWF) $(IOS_XML) $(ANE_IOS_LIB) $(ANE_ANDROID
       -platform iPhone-ARM -platformoptions $(IOS_XML) \
           $(ANE_IOS_LIB) $(ANE_SWF) \
           $(foreach d,$(ANE_IOS_RESOURCE_DIRS),-C $(dir $d) $(notdir $d)) \
+      $(if $(ANE_ANDROID_JAR), \
       -platform Android-ARM $(ANE_ANDROID_JAR) $(ANE_SWF) \
-          $(foreach d,$(ANE_ANDROID_JAR_SOURCES),$(if $(wildcard $d/res),-C $d res)) \
+          $(foreach d,$(ANE_ANDROID_JAR_SOURCES), \
+              $(if $(wildcard $d/res),-C $d res))) \
       -platform default $(ANE_SWF))
 	$(if $(ANE_BUNDLED_LIBS), \
 	  $(call silent,MERGE $@, \
