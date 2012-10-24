@@ -4,6 +4,8 @@ ROOT ?= ..
 ANE_IOS_LIB = libIOS.a
 ANE_ANDROID_JAR = $(if $(ANE_ANDROID_JAR_SOURCES),android.jar)
 
+ANDROID_SRC_SEARCH_PATHS ?= src
+
 ANE := $(shell echo $(NAME).ane | tr A-Z a-z)
 ANE_SRCDIR ?= $(ROOT)/src
 ANE_AS3DIR ?= $(ANE_SRCDIR)/as3
@@ -29,6 +31,7 @@ extractAndroidPackage = $(shell xml sel -T -t -m /manifest -v @package $1)
 getPackagePath = $(shell echo $1 | tr . /)
 
 getAndroidResourceFiles = $(call find,$1,! -name '.*' -type f)
+getAndroidSourceDir = $(call firstsubdir,$1,$(ANDROID_SRC_SEARCH_PATHS))
 
 # 1:name, 2:path, 3:manifest, 4:resources, 5:package, 6:packagePath, 7:R.java
 androidResources = $(foreach p,$2,$(call ar1,$1,$p))
@@ -64,8 +67,8 @@ $$($1_GEN)/%.java: $2/%.aidl | $$($1_GEN)
 endef
 
 # 1:name 2:path 3:java files
-androidSources = $(foreach p,$2,$(call aj1,$1,$p))
-aj1 = $(call aj2,$1,$2/src,$(call find,$2/src,-name '*.java'))
+androidSources = $(foreach p,$2,$(call aj1,$1,$(call getAndroidSourceDir,$p)))
+aj1 = $(call aj2,$1,$2,$(call find,$2,-name '*.java'))
 aj2 = $(if $3,$(call aj3,$1,$2,$3))
 define aj3
 $1_SOURCEPATH += $2

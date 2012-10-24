@@ -81,6 +81,9 @@ check = $(if $1,$1,$(error $2))
 # Fail if given variable is undefined $(call chkvar,VAR_NAME)
 chkvar = $(if $($1),$($1),$(error Variable '$1' not defined))
 
+# Find first subdir that exists: $(call firstsubdir,path,subdir1 subdir2 subdir3)
+firstsubdir = $(firstword $(wildcard $(patsubst %,$1/%,$2)))
+
 # Evaluates definition (definition name, variable name, suffix)
 # Parameters passed to definition: (variable name, variable stem, dir, basename, suffix)
 _suffixrules = $(eval $(call $1,$2,$(patsubst %_$3,%,$2),$(dir $($2)),$(basename $(notdir $($2))),$3))
