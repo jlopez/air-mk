@@ -30,5 +30,5 @@ OBJCXXFLAGS += -I$(FLEX_SDK)/include
 GIT_HEAD = $(ROOT)/.git/HEAD $(wildcard $(ROOT)/.git/refs/*)
 REVISION := $(strip $(shell git log --format=oneline |wc -l))
 DIRTY := $(if $(shell git status --porcelain),*)
-COMMIT := $(shell git log -n1 --format=format:%h)$(DIRTY)
+COMMIT := $(if $(DEBUG),D_)$(shell git log -n1 --format=format:%h)$(DIRTY)
 NOTES = "Build $(VERSION).$(REVISION) ($(COMMIT)) by `id -un`@`hostname` `date +'%Y/%m/%d %H:%M:%S'`"
