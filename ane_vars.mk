@@ -28,9 +28,11 @@ vpath %.xib $(OBJC_XIBDIRS)
 extractAndroidPackage = $(shell xml sel -T -t -m /manifest -v @package $1)
 getPackagePath = $(shell echo $1 | tr . /)
 
+getAndroidResourceFiles = $(call find,$1,! -name '.*' -type f)
+
 # 1:name, 2:path, 3:manifest, 4:resources, 5:package, 6:packagePath, 7:R.java
 androidResources = $(foreach p,$2,$(call ar1,$1,$p))
-ar1 = $(call ar2,$1,$2,$2/AndroidManifest.xml,$(call find,$2/res,-type f))
+ar1 = $(call ar2,$1,$2,$2/AndroidManifest.xml,$(call getAndroidResourceFiles,$2/res))
 ar2 = $(if $(wildcard $3),$(if $4,$(call ar3,$1,$2,$3,$4)))
 ar3 = $(call ar4,$1,$2,$3,$4,$(call extractAndroidPackage,$3))
 ar4 = $(call ar5,$1,$2,$3,$4,$5,$(call getPackagePath,$5))
