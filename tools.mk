@@ -20,6 +20,7 @@ MXMLC = $(FLEX_SDK)/bin/mxmlc
 ASCFLAGS = +configname=airmobile -swf-version=13 -debug=$(if $(DEBUG),true,false)
 
 CLASSPATH += $(FLEX_SDK)/lib/android/FlashRuntimeExtensions.jar
+CLASSPATH += $(ANDROID_SDK)/tools/support/annotations.jar
 
 CFLAGS += -I$(FLEX_SDK)/include
 CXXFLAGS += -I$(FLEX_SDK)/include
