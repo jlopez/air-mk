@@ -53,9 +53,6 @@ $(DSYM_ZIP): $(DSYM)
 $(APP_XML): $(APP_XML_IN) $(GIT_HEAD)
 	$(call expandMacros)
 
-$(ANDROID_PROPERTIES): $(ANDROID_PROPERTIES_IN) $(GIT_HEAD)
-	$(call expandMacros)
-
 $(IPA): $(SWF) $(APP_XML) $(ANES) $(OTHER_RESOURCES) $(ICONS) $(EXPANDED_ANES)
 	$(call silent,ADT $@, \
 	rm -fr $(DSYM) && \
@@ -81,13 +78,12 @@ install-apk: $(APK)
 	$(ADB) install -r $<; \
 	touch $@)
 
-$(APK): $(SWF) $(APP_XML) $(ANES) $(ANDROID_PROPERTIES) $(OTHER_RESOURCES) $(ICONS)
+$(APK): $(SWF) $(APP_XML) $(ANES) $(OTHER_RESOURCES) $(ICONS)
 
 %.apk: %.swf
 	$(call silent,ADT $@, \
 	$(ADT) $(APK_ADTFLAGS) $@ $(APP_XML) $< $(ICONS) \
-	  $(ADT_EXTDIRS) $(OTHER_RESOURCES) \
-		-C $(dir $(ANDROID_PROPERTIES)) $(notdir $(ANDROID_PROPERTIES)))
+	  $(ADT_EXTDIRS) $(OTHER_RESOURCES))
 
 $(SWF): $(SRC_MAIN) $(ANES)
 	$(call silent,MXMLC $@, \

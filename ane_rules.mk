@@ -3,7 +3,7 @@ ane: $(ANE)
 
 clean::
 	rm -fr $(EXT_XML) *.ane *.sw? *.nib META-INF
-	rm -fr $(ANE_ANDROID_LIB) gen cls jar $(ANDROID_PROPERTIES)
+	rm -fr $(ANE_ANDROID_LIB) gen cls jar
 	rm -fr $(WIKI_DIR)
 
 $(EXT_XML): $(EXT_XML_IN) $(GIT_HEAD)

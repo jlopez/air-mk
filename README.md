@@ -58,7 +58,6 @@ You should define all these variables in your `Makefile`:
 ### Basic
 * APP_ID: Your AIR application ID
 * NAME: Will be used to name your build products (NAME.ipa, NAME.apk, NAME.ane)
-* ANDROID_PROPERTIES_IN: Android properties file
 
 ### Signing
 * KEYDIR: A directory containing a list of companies. Each company should
