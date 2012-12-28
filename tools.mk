@@ -1,12 +1,7 @@
-AAPT = $(call chkvar,ANDROID_SDK)/platform-tools/aapt
-ADB = $(ANDROID_SDK)/platform-tools/adb
-AIDL = $(ANDROID_SDK)/platform-tools/aidl
+WORK_DIR ?= .work
+
 JAVAC = javac
 JAR = jar
-
-ANDROID_DEBUGGABLE = $(if DEBUG,android:debuggable="true")
-
-$(if $(wildcard $(AAPT)),,$(error Invalid Android SDK at $(ANDROID_SDK)))
 
 MXMLC_PATH := $(shell which mxmlc)
 $(if $(MXMLC_PATH),,$(error Flex SDK not found in the PATH))

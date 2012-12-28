@@ -1,11 +1,16 @@
+, := ,
+comma := ,
 space :=
 space +=
+$(space) :=
+$(space) +=
 joinwith = $(subst $(space),$1,$(strip $2))
 # findfiles paths,wildcards
 find = $(if $(wildcard $1),$(shell find $1 $2))
 findfiles = $(wildcard $(foreach p,$1,$(foreach s,$2,$p/$s)))
 findcfiles = $(call findfiles,$1,*.m *.mm *.c *.cc)
 findjavafiles = $(call find,$1,-iname '*.java')
+filterout = $(foreach s,$2,$(if $(findstring $1,$s),,$s))
 # filtercfiles,paths
 filtercfiles = $(filter %.m %.mm %.c %.cc,$1)
 filteroutcfiles = $(filter-out %.m %.mm %.c %.cc,$1)
@@ -80,6 +85,8 @@ checkpath = $(if $(wildcard $1),$1,$(error Path $1 does not exist))
 check = $(if $1,$1,$(error $2))
 # Fail if given variable is undefined $(call chkvar,VAR_NAME)
 chkvar = $(if $($1),$($1),$(error Variable '$1' not defined))
+# Fail if any of the variables given is undefined $(call chkvars,VAR1 VAR2...)
+chkvars = $(foreach v,$1,$(if $($v),,$(error Variable '$v' not defined)))
 
 # Find first subdir that exists: $(call firstsubdir,path,subdir1 subdir2 subdir3)
 firstsubdir = $(firstword $(wildcard $(patsubst %,$1/%,$2)))

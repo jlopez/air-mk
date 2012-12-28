@@ -1,6 +1,14 @@
 ################## ANE Variables
 ROOT ?= ..
 
+AAPT = $(call chkvar,ANDROID_SDK)/platform-tools/aapt
+ADB = $(ANDROID_SDK)/platform-tools/adb
+AIDL = $(ANDROID_SDK)/platform-tools/aidl
+
+ANDROID_DEBUGGABLE = $(if DEBUG,android:debuggable="true")
+
+$(if $(wildcard $(AAPT)),,$(error Invalid Android SDK at $(ANDROID_SDK)))
+
 ANE_IOS_LIB = libIOS.a
 ANE_ANDROID_JAR = $(if $(ANE_ANDROID_JAR_SOURCES),android.jar)
 
