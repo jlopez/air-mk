@@ -1,10 +1,10 @@
-################## JAVA Variables
+################## JAR Variables
 
 # 1:name 2:path 3:java files
-androidSources = $(foreach p,$2,$(call aj1,$1,$p/src))
-aj1 = $(call aj2,$1,$2,$(call find,$2,-name '*.java'))
-aj2 = $(if $3,$(call aj3,$1,$2,$3))
-define aj3
+jarSources = $(foreach p,$2,$(call js1,$1,$p/src))
+js1 = $(call js2,$1,$2,$(call find,$2,-name '*.java'))
+js2 = $(if $3,$(call js3,$1,$2,$3))
+define js3
 $1_SOURCEPATH += $2
 $1_SRCS += $3
 $1_JAR_DEPS += $(patsubst $2/%.java,$$($1_CLS)/%.class,$3)
@@ -29,6 +29,8 @@ endef
 
 define jar
 
+$(call chkvars,$1_SOURCES)
+
 $1_WORK = $(WORK_DIR)/.$1
 $1_CLS = $$($1_WORK)/cls
 
@@ -43,7 +45,7 @@ $1_JFLAGS = -d $$($1_CLS) \
             $$($1_FLAGS)
 
 $(call jarClasses,$1,$($1_SOURCES))
-$(call androidSources,$1,$($1_SOURCES))
+$(call jarSources,$1,$($1_SOURCES))
 
 $$($1): $$($1_JAR_DEPS) | $$($1_CLS)
 	$$(call silent,JAR $$@, \

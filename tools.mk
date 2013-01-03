@@ -1,5 +1,8 @@
 WORK_DIR ?= .work
 
+clean::
+	rm -fr $(WORK_DIR)
+
 JAVAC = javac
 JAR = jar
 

@@ -9,7 +9,7 @@ SFS_EXT_DIR = $(SFS_SERVER_ROOT)/extensions
 SFS_EXT_LIB_DIR = $(SFS_EXT_DIR)/__lib__
 SFS_LOG = $(SFS_LOG_DIR)/smartfox.log
 
-SEED = $(if $(BACKEND),$(BACKEND)/server/bin/)seed
+SEED = $(call chkvar,BACKEND)/server/bin/seed
 
 sfs-%: | $(SFS_SERVICE)
 	$(SFS_SERVICE) $* |cat
@@ -34,21 +34,23 @@ $(SFS_ROOT) $(SFS_AS3_SWC) $(SFS_SERVER_ROOT) $(SFS_SERVICE) $(SFS_LOG_DIR) $(SF
 
 define sfs
 
+$(call chkvars,$1_ZONE)
+
 $1_EXT_DIR = $$(SFS_EXT_DIR)/$$($1)
 
 $1_LIBS = $$(call filterout,sfs2x,$$($2_JAR_CLASSPATH))
 $1_DST_LIBS = $$(addprefix $$(SFS_EXT_LIB_DIR)/,$$(notdir $$($1_LIBS)))
 $1_DST_ZONE = $$(SFS_ZONES_DIR)/$$($1).zone.xml
-$1_DST_JAR = $$($1_EXT_DIR)/extension.jar
+$1_DST_JAR_ = $$($1_EXT_DIR)/extension.jar
 
-sfs-install:: $$($1_DST_JAR) $$($1_DST_ZONE) $$($1_DST_LIBS)
+sfs-install:: $$($1_DST_JAR_) $$($1_DST_ZONE) $$($1_DST_LIBS)
 	@
 
 sfs-uninstall::
 	rm -fr $$($1_EXT_DIR)
 	rm -f $$($1_DST_ZONE) $$($1_DST_LIBS)
 
-$$($1_DST_JAR): $$($2_JAR) |$$($1_EXT_DIR)
+$$($1_DST_JAR_): $$($2_JAR) |$$($1_EXT_DIR)
 	$$(call silent,COPY $4 jar, \
 	cp $$< $$@)
 
@@ -63,7 +65,7 @@ $$($1_EXT_DIR):
 
 $(if $($1_SEED),
 seed::
-	$$(call silent,SEED $4,$(SEED) $$($1_SEED))
+	$$(call silent,SEED $4,$$(SEED) $$($1_SEED))
 )
 
 endef
