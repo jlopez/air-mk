@@ -3,6 +3,9 @@ WORK_DIR ?= .work
 clean::
 	rm -fr $(WORK_DIR)
 
+$(WORK_DIR):
+	$(call silent,MKDIR $@,mkdir $@)
+
 JAVAC = javac
 JAR = jar
 
