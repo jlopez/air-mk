@@ -93,7 +93,8 @@ firstsubdir = $(firstword $(wildcard $(patsubst %,$1/%,$2)))
 
 # Evaluates definition (definition name, variable name, suffix)
 # Parameters passed to definition: (variable name, variable stem, dir, basename, suffix)
-_suffixrules = $(eval $(call $1,$2,$(patsubst %_$3,%,$2),$(dir $($2)),$(basename $(notdir $($2))),$3))
+_suffixrules2 = $(call $1,$2,$3,$4,$5,$6)$(call $6_PLUGIN,$2,$3,$4,$5,$6)
+_suffixrules = $(eval $(call _suffixrules2,$1,$2,$(patsubst %_$3,%,$2),$(dir $($2)),$(basename $(notdir $($2))),$3))
 suffixrules = $(foreach l,$(filter %_$1,$(.VARIABLES)),$(if $($l),$(call _suffixrules,$2,$l,$1)))
 # Debug suffix rule
 # Usage: $$(call debugsuffixrule,$1,$5)

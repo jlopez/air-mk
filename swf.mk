@@ -21,7 +21,7 @@ $1_CFLAGS = $$($1_FLAGS) \
 						-file-specs=$$($1_MAIN) \
             $(if $(DEBUG),-debug) \
 
-$$($1): $$($1_SOURCES) $$($1_CLASSPATH) $$($1_CONFIG)
+$$($1): $$($1_SOURCE_FILES) $$($1_CLASSPATH) $$($1_CONFIG)
 	$$(call silent,MXMLC $$@, \
   $$(MXMLC) $$($1_CFLAGS) -o $$@)
 
