@@ -75,6 +75,8 @@ macrosSed ='$(foreach V,$(call macros,$1),s\#@$V@\#$($V)\#g;)'
 expandMacros = $(call silent,MACRO $@,sed $(call macrosSed,$<) $< >$@)
 resizeImage = $(call silent,RESIZE $@,sips -z $1 $1 $< --out $@ >/dev/null)
 
+mkdir = $(call silent,MKDIR $@,mkdir -p $@)
+
 SPACE = $(eval) $(eval)
 # Join list with separator
 joinsep = $(subst $(SPACE),$2,$1)
