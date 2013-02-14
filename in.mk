@@ -6,7 +6,6 @@ $1_WORK = $$(WORK_DIR)/$2
 
 $2 ?= $$($1_WORK)/$(4:%.in=%)
 
-.PHONY: $$($2)
 $$($2): $$($1) | $$($1_WORK)
 	$$(call expandMacros)
 
