@@ -9,7 +9,7 @@ clean::
 $(EXT_XML): $(EXT_XML_IN) $(GIT_HEAD)
 	$(call expandMacros)
 
-$(ANE): $(EXT_XML) $(ANE_SWC) $(ANE_SWF) $(IOS_XML) $(ANE_IOS_LIB) $(ANE_ANDROID_JAR) $(ANE_BUNDLED_LIBS) $(ANE_ANDROID_JAR_DEVICE_LIBS)
+$(ANE): $(EXT_XML) $(ANE_SWC) $(ANE_SWF) $(IOS_XML) $(ANE_IOS_LIB) $(ANE_ANDROID_JAR) $(ANE_BUNDLED_LIBS) $(ANE_ANDROID_JAR_DEVICE_LIBS) $(ANE_IOS_RESOURCE_DIRS)
 	$(call silent,ADT $@, \
 	adt -package -target ane $(ANE) $(EXT_XML) -swc $(ANE_SWC) \
       -platform iPhone-ARM -platformoptions $(IOS_XML) \
