@@ -64,7 +64,7 @@ $1_ADL_FLAGS ?= -profile mobileDevice -screensize iPhoneRetina
 .PHONY: run-$4
 run-$4: $$($1_APP_XML) $$($1)
 	$$(call silent,ADL $4, \
-  $$(ADL) $$($1_ADL_FLAGS) $$<)
+  $$(ADL) $$($1_ADL_FLAGS) $$< &)
 
 ifdef $1_IPA
 
