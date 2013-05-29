@@ -4,7 +4,6 @@ ane: $(ANE)
 clean::
 	rm -fr $(EXT_XML) *.ane *.sw? *.nib META-INF
 	rm -fr $(ANE_ANDROID_LIB) gen cls jar
-	rm -fr $(WIKI_DIR)
 
 $(EXT_XML): $(EXT_XML_IN) $(GIT_HEAD)
 	$(call expandMacros)
@@ -35,24 +34,10 @@ $(ANE_SWF): $(ANE_SWC)
 	$(call silent,EXTRACT $@, unzip -qo $< $@)
 	@touch $@
 
-dist-upload: $(WIKI_MANIFEST)
-	cd $(WIKI_DIR) &&\
-  git add -A &&\
-  git commit -m 'Update binaries from rev $(COMMIT)' &&\
-  git push
-
-$(WIKI_MANIFEST): $(WIKI_DIST)
-	echo "Commit $(COMMIT)" >$@
-	echo >>$@
-	printf "$(foreach d,$(WIKI_DIST),[$(notdir $d)]($(notdir $d)))" >>$@
-
-$(WIKI_DIST): | $(WIKI_DIR)
-
-$(WIKI_DIR)/%: %
-	cp $< $@
-
-$(WIKI_DIR):
-	git clone $(call chkvar,WIKI_GIT_URL) $(WIKI_DIR)
+dist-upload: $(ANE)
+	$(call silent,CLEAN? $(COMMIT),echo $(COMMIT) |grep -qE '^[0-9a-f]{7}$$')
+	$(call silent,UPLOAD $(COMMIT),s3cmd put --acl-public $(ANE) s3://anes)
+	$(call silent,COPY $(COMMIT),s3cmd cp s3://anes/$(ANE) s3://anes/$(ANE).$(COMMIT).r$(REVISION))
 
 .PHONY: ane clean
 

@@ -26,9 +26,6 @@ ANE_SWC = library.swc
 ANE_SWF = library.swf
 
 DIST = $(ANE) $(ANE_BUNDLED_LIBS)
-WIKI_DIR = wiki
-WIKI_MANIFEST = $(WIKI_DIR)/manifest.md
-WIKI_DIST = $(foreach f,$(DIST),$(WIKI_DIR)/$f)
 
 OBJC_XIBS := $(notdir $(wildcard $(OBJC_XIBDIRS:=/*.xib)))
 OBJC_NIBS := $(OBJC_XIBS:%.xib=%.nib)
