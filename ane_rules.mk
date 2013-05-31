@@ -36,8 +36,7 @@ $(ANE_SWF): $(ANE_SWC)
 
 dist-upload: $(ANE)
 	$(call silent,CLEAN? $(COMMIT),echo $(COMMIT) |grep -qE '^[0-9a-f]{7}$$')
-	$(call silent,UPLOAD $(COMMIT),s3cmd put --acl-public $(ANE) s3://anes)
-	$(call silent,COPY $(COMMIT),s3cmd cp s3://anes/$(ANE) s3://anes/$(ANE).$(COMMIT).r$(REVISION))
+	$(call silent,UPLOAD $(COMMIT),s3cmd put --add-header='x-amz-meta-version: $(COMMIT).r$(REVISION)' --acl-public $(ANE) s3://anes)
 
 .PHONY: ane clean
 
