@@ -21,7 +21,7 @@ ANE_CLASS = $(EXT_ID).$(NAME)
 ANE_AS3_SRCS := $(shell find $(ANE_AS3DIR) -name '*.as')
 EXT_XML_IN = $(ANE_SRCDIR)/extension.xml.in
 EXT_XML = extension.xml
-IOS_XML = $(ANE_SRCDIR)/ios/platform.xml
+IOS_XML = $(wildcard $(ANE_SRCDIR)/ios/platform.xml)
 ANE_SWC = library.swc
 ANE_SWF = library.swf
 
