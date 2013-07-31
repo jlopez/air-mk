@@ -83,7 +83,7 @@ SPACE = $(eval) $(eval)
 joinsep = $(subst $(SPACE),$2,$1)
 
 # Fail if given path does not exist
-checkpath = $(if $(wildcard $1),$1,$(error Path $1 does not exist))
+checkpath = $(if $(wildcard $1),$(firstword $(wildcard $1)),$(error Path $1 does not exist))
 # Fail if given value missing
 check = $(if $1,$1,$(error $2))
 # Fail if given variable is undefined $(call chkvar,VAR_NAME)
