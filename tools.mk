@@ -23,7 +23,8 @@ CXXFLAGS += -I$(FLEX_SDK)/include
 OBJCFLAGS += -I$(FLEX_SDK)/include
 OBJCXXFLAGS += -I$(FLEX_SDK)/include
 
-GIT_HEAD = $(ROOT)/.git/HEAD $(wildcard $(ROOT)/.git/refs/*)
+GIT_DIR = $(ROOT)/$(shell grep -o '[^ ]*$$' $(ROOT)/.git 2>/dev/null || echo .git)
+GIT_HEAD = $(GIT_DIR)/HEAD $(wildcard $(GIT_DIR)/.git/refs/*)
 REVISION := $(strip $(shell git log --format=oneline |wc -l))
 DIRTY := $(if $(shell git status --porcelain),*)
 COMMIT := $(if $(DEBUG),D_)$(shell git log -n1 --format=format:%h)$(DIRTY)
