@@ -5,6 +5,7 @@ space +=
 $(space) :=
 $(space) +=
 joinwith = $(subst $(space),$1,$(strip $2))
+echoshell = $(warning $1)$(shell $1)
 # findfiles paths,wildcards
 find = $(if $(wildcard $1),$(shell find $1 $2))
 findfiles = $(wildcard $(foreach p,$1,$(foreach s,$2,$p/$s)))

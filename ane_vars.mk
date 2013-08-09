@@ -72,7 +72,7 @@ endef
 
 # 1:name 2:path 3:java files
 androidSources = $(foreach p,$2,$(call aj1,$1,$(call getAndroidSourceDir,$p)))
-aj1 = $(call aj2,$1,$2,$(call find,$2,-name '*.java'))
+aj1 = $(call aj2,$1,$2,$(call find,$2,-name '[A-Z]*.java'))
 aj2 = $(if $3,$(call aj3,$1,$2,$3))
 define aj3
 $1_SOURCEPATH += $2
