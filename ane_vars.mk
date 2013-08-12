@@ -31,7 +31,7 @@ OBJC_NIBS := $(OBJC_XIBS:%.xib=%.nib)
 
 vpath %.xib $(OBJC_XIBDIRS)
 
-extractAndroidPackage = $(shell xml sel -T -t -m /manifest -v @package $1)
+extractAndroidPackage = $(shell $(XML) sel -T -t -m /manifest -v @package $1)
 getPackagePath = $(shell echo $1 | tr . /)
 
 getAndroidResourceFiles = $(call find,$1,! -name '.*' -type f)
@@ -111,7 +111,7 @@ $1_CP = $$(call joinwith,:,$$(CLASSPATH) $$($1_CLASSPATH))
 $1_SP = $$(call joinwith,:,$$($1_SOURCEPATH) $$($1_GEN))
 
 $1_API ?= 8
-$1_ANDROID_JAR = $$(ANDROID_SDK)/platforms/android-$$($1_API)/android.jar
+$1_ANDROID_JAR = $$(call checkpath,$$(ANDROID_SDK)/platforms/android-$$($1_API)/android.jar,Missing Android API level $$($1_API))
 $1_FRAMEWORK_AIDL = $$(ANDROID_SDK)/platforms/android-$$($1_API)/framework.aidl
 $1_JFLAGS = -d $$($1_CLS) \
             $(if $(DEBUG),-g) \

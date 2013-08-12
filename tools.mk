@@ -9,6 +9,9 @@ $(if $(MXMLC_PATH),,$(error Flex SDK not found in the PATH))
 FLEX_SDK := $(abspath $(MXMLC_PATH)/../..)
 $(if $(wildcard $(FLEX_SDK)/include/FlashRuntimeExtensions.h),,$(error Invalid Flex SDK at $(FLEX_SDK)))
 
+XML = $(shell which xml)
+$(if $(wildcard $(XML)),,$(error xml-starlet dependency missing))
+
 ADT = $(FLEX_SDK)/bin/adt
 MXMLC = $(FLEX_SDK)/bin/mxmlc
 

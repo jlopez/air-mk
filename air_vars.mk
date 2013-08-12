@@ -13,7 +13,7 @@ EXPANDED_ANES = $(foreach A,$(ANES),$(EXT_DIR)/$(notdir $A))
 
 APP_XML = app.xml
 APP_XML_NS := $(shell grep -om1 http:.*[0-9] $(APP_XML_IN))
-ICONS := $(shell xml sel -N x=$(APP_XML_NS) -t -v '//x:icon/*' $(APP_XML_IN))
+ICONS := $(shell $(XML) sel -N x=$(APP_XML_NS) -t -v '//x:icon/*' $(APP_XML_IN))
 
 KEYS_ROOT = $(call findparent,keys/$(COMPANY))
 KEYS_APP_PATH = $(KEYS_ROOT)/$(APP_ID)
