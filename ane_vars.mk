@@ -3,7 +3,7 @@ ROOT ?= ..
 
 ANDROID_BUILD_TOOLS = $(lastword $(sort $(wildcard $(call chkvar,ANDROID_SDK)/build-tools/*)))
 AAPT = $(call checkpath,$(if $(ANDROID_BUILD_TOOLS),$(ANDROID_BUILD_TOOLS)/aapt,$(ANDROID_SDK)/platform-tools/aapt))
-ADB = $(call checkpath,$(if $(ANDROID_BUILD_TOOLS),$(ANDROID_BUILD_TOOLS)/adb,$(ANDROID_SDK)/platform-tools/adb))
+ADB = $(call checkpath,$(ANDROID_SDK)/platform-tools/adb)
 AIDL = $(call checkpath,$(if $(ANDROID_BUILD_TOOLS),$(ANDROID_BUILD_TOOLS)/aidl,$(ANDROID_SDK)/platform-tools/aidl))
 
 ANDROID_DEBUGGABLE = $(if DEBUG,android:debuggable="true")
