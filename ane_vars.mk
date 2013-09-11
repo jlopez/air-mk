@@ -36,6 +36,7 @@ getPackagePath = $(shell echo $1 | tr . /)
 
 getAndroidResourceFiles = $(call find,$1,! -name '.*' -type f)
 getAndroidSourceDir = $(call firstsubdir,$1,$(ANDROID_SRC_SEARCH_PATHS))
+getAndroidSupportJar = $(if $1,$(call checkpath,$(ANDROID_SDK)/extras/android/support/v$1/android-support-v$1.jar))
 
 # 1:name, 2:path, 3:manifest, 4:resources, 5:package, 6:packagePath, 7:R.java
 androidResources = $(foreach p,$2,$(call ar1,$1,$p))
@@ -107,12 +108,13 @@ $1_WORK = .$($1:.jar=)
 $1_CLS = $$($1_WORK)/cls
 $1_GEN = $$($1_WORK)/gen
 
-$1_CP = $$(call joinwith,:,$$(CLASSPATH) $$($1_CLASSPATH))
+$1_CP = $$(call joinwith,:,$$(CLASSPATH) $$($1_CLASSPATH) $$($1_SUPPORT_JAR))
 $1_SP = $$(call joinwith,:,$$($1_SOURCEPATH) $$($1_GEN))
 
 $1_API ?= 8
 $1_ANDROID_JAR = $$(call checkpath,$$(ANDROID_SDK)/platforms/android-$$($1_API)/android.jar,Missing Android API level $$($1_API))
 $1_FRAMEWORK_AIDL = $$(ANDROID_SDK)/platforms/android-$$($1_API)/framework.aidl
+$1_SUPPORT_JAR = $$(call getAndroidSupportJar,$$($1_SUPPORT_VERSION))
 $1_JFLAGS = -d $$($1_CLS) \
             $(if $(DEBUG),-g) \
             $$(if $$($1_CP),-classpath $$($1_CP)) \

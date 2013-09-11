@@ -85,6 +85,7 @@ You should define all these variables in your `Makefile`:
 * ANE_IOS_RESOURCE_DIRS: Additional resource directories to include in the ANE
 * ANE_ANDROID_JAR_SOURCES: List of android projects / jar files to compile
 * ANE_ANDROID_JAR_CLASSPATH: Additional android jars to compile against
+* ANE_ANDROID_JAR_SUPPORT_VERSION: Optional, android support jar version (e.g. 4)
 * ANDROID_SRC_SEARCH_PATHS: List of source roots, default "src"
 
 Application Descriptor Template
