@@ -146,3 +146,7 @@ clean::
 	rm -fr $$($1_WORK) $$($1)
 
 endef
+
+XCODE_BUILD_DIR = xcode
+ANE_IOS_SRC_LIB = $(XCODE_BUILD_DIR)/Release-iphoneos/lib$(NAME).a
+ANE_IOS_PRJ = ../src/ios/$(NAME).xcodeproj

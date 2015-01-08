@@ -43,3 +43,14 @@ dist-upload: $(ANE)
 .PHONY: ane clean
 
 $(call suffixrules,JAR,jar)
+
+clean::
+	rm -fr $(XCODE_BUILD_DIR)
+
+$(ANE_IOS_LIB): $(ANE_IOS_SRC_LIB)
+	$(call silent,COPY $@, cp $< $@)
+
+$(ANE_IOS_SRC_LIB): $(call find,../src/ios,-type f) $(ANE_IOS_RESOURCE_DIRS)
+	$(call silent,XCODEBUILD, \
+	xcodebuild -project $(ANE_IOS_PRJ) -configuration Release FLEX_SDK=$(FLEX_SDK) SYMROOT=$(abspath $(XCODE_BUILD_DIR)) >/dev/null)
+
