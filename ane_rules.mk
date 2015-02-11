@@ -19,7 +19,7 @@ $(ANE): $(EXT_XML) $(ANE_SWC) $(ANE_SWF) $(if $(IOS_XML),$(IOS_XML) $(ANE_IOS_LI
       $(if $(ANE_ANDROID_JAR), \
       -platform Android-ARM $(ANE_ANDROID_JAR) $(ANE_SWF) \
           $(foreach d,$(ANE_ANDROID_JAR_SOURCES), \
-              $(if $(wildcard $d/res),-C $d res))) \
+              $(if $(wildcard $d/res),-C $d res) $(if $(wildcard $d/libs),-C $d libs))) \
       -platform default $(ANE_SWF))
 	$(if $(ANE_BUNDLED_LIBS), \
 	  $(call silent,MERGE $@, \
