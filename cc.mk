@@ -18,6 +18,10 @@ $(foreach l,$(filter %_LIB_SOURCES,$(.VARIABLES)),$(call libtool,$(l:_SOURCES=))
 %.o: %.m | $(DEPDIR)
 	$(call silent,OBJC $*.m, \
 	$(OBJC) $(OBJCFLAGS) -MMD -MP -MF $(df).d -o $@ -c $<)
+	
+%.o: %.c | $(DEPDIR)
+	$(call silent,OBJC $*.c, \
+	$(OBJC) $(OBJCFLAGS) -MMD -MP -MF $(df).d -o $@ -c $<)
 
 $(DEPDIR):
 	@mkdir $(DEPDIR)
