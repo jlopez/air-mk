@@ -30,7 +30,7 @@ $(ANE): $(EXT_XML) $(ANE_SWC) $(ANE_SWF) $(if $(IOS_XML),$(IOS_XML) $(ANE_IOS_LI
 
 $(ANE_SWC): $(ANE_AS3_SRCS)
 	$(call silent,COMPC $(ANE_CLASS), \
-	$(COMPC) $(ASCFLAGS) $(foreach d,$(ANE_AS3DIR),-sp+=$d) -output $@ $(ANE_CLASS))
+	$(COMPC) $(ASCFLAGS) $(foreach d,$(ANE_AS3DIR),-sp+=$d) -output $@ $(ANE_CLASS) $(ANE_ENTRY_CLASSES))
 
 $(ANE_SWF): $(ANE_SWC)
 	$(call silent,EXTRACT $@, unzip -qo $< $@)
