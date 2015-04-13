@@ -111,7 +111,7 @@ $1_GEN = $$($1_WORK)/gen
 $1_CP = $$(call joinwith,:,$$(CLASSPATH) $$($1_CLASSPATH) $$($1_SUPPORT_JAR))
 $1_SP = $$(call joinwith,:,$$($1_SOURCEPATH) $$($1_GEN))
 
-$1_API ?= 8
+$1_API ?= 10
 $1_ANDROID_JAR = $$(call checkpath,$$(ANDROID_SDK)/platforms/android-$$($1_API)/android.jar,Missing Android API level $$($1_API))
 $1_FRAMEWORK_AIDL = $$(ANDROID_SDK)/platforms/android-$$($1_API)/framework.aidl
 $1_SUPPORT_JAR = $$(call getAndroidSupportJar,$$($1_SUPPORT_VERSION))
