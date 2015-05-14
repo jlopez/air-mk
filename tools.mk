@@ -20,6 +20,7 @@ ASCFLAGS = +configname=airmobile -swf-version=$(AS_SWF_VERSION) -debug=$(if $(DE
 
 CLASSPATH += $(FLEX_SDK)/lib/android/FlashRuntimeExtensions.jar
 CLASSPATH += $(ANDROID_SDK)/tools/support/annotations.jar
+CLASSPATH += $(FLEX_SDK)/lib/android/lib/runtimeClasses.jar
 
 CFLAGS += -I$(FLEX_SDK)/include
 CXXFLAGS += -I$(FLEX_SDK)/include
